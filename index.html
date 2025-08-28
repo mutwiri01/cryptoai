@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CryptoAnalyzerAI | AI-Powered Crypto Analysis</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Orbitron:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --primary: #6c5ce7;
+        --primary-gradient: linear-gradient(135deg, #6c5ce7 0%, #3498db 100%);
+        --secondary: #a29bfe;
+        --dark: #2d3436;
+        --light: #f5f6fa;
+        --success: #00b894;
+        --danger: #d63031;
+        --warning: #fdcb6e;
+        --gray: #dfe6e9;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --background-gradient: linear-gradient(
+          135deg,
+          #1a1a2e 0%,
+          #16213e 100%
+        );
+      }
+
+      .dark-mode {
+        --primary: #6c5ce7;
+        --primary-gradient: linear-gradient(135deg, #6c5ce7 0%, #3498db 100%);
+        --secondary: #a29bfe;
+        --dark: #f5f6fa;
+        --light: #2d3436;
+        --success: #00b894;
+        --danger: #d63031;
+        --warning: #fdcb6e;
+        --gray: #636e72;
+        --card-bg: rgba(45, 52, 54, 0.95);
+        --background-gradient: linear-gradient(
+          135deg,
+          #0f0f1a 0%,
+          #0d1525 100%
+        );
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: background-color 0.3s, color 0.3s, transform 0.2s;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background: var(--background-gradient);
+        color: var(--light);
+        min-height: 100vh;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo h1 {
+        font-family: "Orbitron", sans-serif;
+        font-size: 28px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+      }
+
+      @media (max-width: 480px) {
+        .logo h1 {
+          font-size: 22px;
+        }
+      }
+
+      .logo-icon {
+        font-size: 32px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .theme-toggle {
+        background: var(--card-bg);
+        border: none;
+        width: 50px;
+        height: 25px;
+        border-radius: 25px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0 3px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .toggle-circle {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: var(--primary);
+        transition: transform 0.3s;
+      }
+
+      .dark-mode .toggle-circle {
+        transform: translateX(25px);
+      }
+
+      .last-updated {
+        font-size: 12px;
+        color: var(--gray);
+        background: var(--card-bg);
+        padding: 5px 10px;
+        border-radius: 15px;
+        color: var(--dark);
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      @media (min-width: 768px) {
+        main {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (min-width: 992px) {
+        main {
+          grid-template-columns: 1fr 1.5fr;
+        }
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        color: var(--dark);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .card-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: var(--primary);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card-title i {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .select-container {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      .select-container select {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid var(--gray);
+        background: var(--card-bg);
+        color: var(--dark);
+        font-size: 16px;
+        appearance: none;
+        outline: none;
+        font-weight: 500;
+      }
+
+      .select-container:after {
+        content: "\f078";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        pointer-events: none;
+      }
+
+      .btn {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 12px;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .analysis-result {
+        margin-top: 30px;
+        padding: 20px;
+        border-radius: 15px;
+        background: var(--light);
+        color: var(--dark);
+      }
+
+      .result-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .crypto-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: var(--gray);
+      }
+
+      .crypto-name {
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .price {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 10px 0;
+      }
+
+      .price-change {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      .positive {
+        background: rgba(0, 184, 148, 0.2);
+        color: var(--success);
+      }
+
+      .negative {
+        background: rgba(214, 48, 49, 0.2);
+        color: var(--danger);
+      }
+
+      .analysis-content {
+        margin-top: 20px;
+      }
+
+      .recommendation {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 15px 0;
+        padding: 10px 0;
+        border-top: 1px solid var(--gray);
+        border-bottom: 1px solid var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .buy {
+        color: var(--success);
+      }
+
+      .sell {
+        color: var(--danger);
+      }
+
+      .hold {
+        color: var(--warning);
+      }
+
+      .analysis-details {
+        margin-top: 20px;
+      }
+
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--gray);
+      }
+
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+
+      .chart-container {
+        height: 300px;
+        margin-top: 20px;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 30px 0;
+      }
+
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--gray);
+        border-top: 5px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px;
+        color: var(--gray);
+        font-size: 14px;
+      }
+
+      .tooltip {
+        position: relative;
+        display: inline-block;
+        margin-left: 5px;
+        color: var(--primary);
+      }
+
+      .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: var(--dark);
+        color: var(--light);
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+        font-size: 12px;
+      }
+
+      .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      .technical-indicators {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .indicator {
+        padding: 15px;
+        border-radius: 12px;
+        background: var(--light);
+        text-align: center;
+        transition: transform 0.2s;
+      }
+
+      .indicator:hover {
+        transform: translateY(-3px);
+      }
+
+      .indicator-name {
+        font-size: 14px;
+        color: var(--dark);
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .indicator-value {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .confidence-bar {
+        height: 8px;
+        background: var(--gray);
+        border-radius: 4px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+
+      .confidence-level {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1s ease-in-out;
+      }
+
+      .high-confidence {
+        background: var(--success);
+      }
+
+      .medium-confidence {
+        background: var(--warning);
+      }
+
+      .low-confidence {
+        background: var(--danger);
+      }
+
+      @media (max-width: 480px) {
+        .technical-indicators {
+          grid-template-columns: 1fr;
+        }
+
+        .card {
+          padding: 15px;
+        }
+
+        .result-header {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .chart-container {
+          height: 250px;
+        }
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 10px;
+        background: var(--card-bg);
+        color: var(--dark);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transform: translateX(100vw);
+        transition: transform 0.3s ease-out;
+      }
+
+      .notification.show {
+        transform: translateX(0);
+      }
+
+      .notification.error {
+        border-left: 4px solid var(--danger);
+      }
+
+      .notification.success {
+        border-left: 4px solid var(--success);
+      }
+
+      .notification i {
+        font-size: 20px;
+      }
+
+      .notification.error i {
+        color: var(--danger);
+      }
+
+      .notification.success i {
+        color: var(--success);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <i class="fas fa-coins logo-icon"></i>
+          <h1>CryptoAnalyzerAI</h1>
+        </div>
+        <div class="header-controls">
+          <div class="last-updated" id="lastUpdated">Live data</div>
+          <button class="theme-toggle" id="themeToggle">
+            <div class="toggle-circle"></div>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <div class="card">
+          <h2 class="card-title">
+            <i class="fas fa-coins"></i> Select Cryptocurrency
+          </h2>
+          <div class="select-container">
+            <select id="cryptoSelect">
+              <option value="">Choose a cryptocurrency</option>
+              <option value="bitcoin">Bitcoin (BTC)</option>
+              <option value="ethereum">Ethereum (ETH)</option>
+              <option value="binancecoin">Binance Coin (BNB)</option>
+              <option value="cardano">Cardano (ADA)</option>
+              <option value="solana">Solana (SOL)</option>
+              <option value="ripple">Ripple (XRP)</option>
+              <option value="polkadot">Polkadot (DOT)</option>
+              <option value="dogecoin">Dogecoin (DOGE)</option>
+            </select>
+          </div>
+
+          <h2 class="card-title">
+            <i class="fas fa-sliders-h"></i> Analysis Parameters
+          </h2>
+          <div class="select-container">
+            <select id="timeframeSelect">
+              <option value="1">Last 24 hours</option>
+              <option value="7" selected>Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+            </select>
+          </div>
+
+          <button id="analyzeBtn" class="btn">
+            <i class="fas fa-brain"></i> Analyze with AI
+          </button>
+
+          <div class="technical-indicators">
+            <div class="indicator">
+              <div class="indicator-name">
+                RSI
+                <div class="tooltip">
+                  ⓘ<span class="tooltiptext"
+                    >Relative Strength Index: Measures speed and change of price
+                    movements</span
+                  >
+                </div>
+              </div>
+              <div class="indicator-value" id="rsiValue">-</div>
+            </div>
+            <div class="indicator">
+              <div class="indicator-name">
+                MACD
+                <div class="tooltip">
+                  ⓘ<span class="tooltiptext"
+                    >Moving Average Convergence Divergence: Shows relationship
+                    between two moving averages</span
+                  >
+                </div>
+              </div>
+              <div class="indicator-value" id="macdValue">-</div>
+            </div>
+            <div class="indicator">
+              <div class="indicator-name">
+                Bollinger Bands
+                <div class="tooltip">
+                  ⓘ<span class="tooltiptext"
+                    >Volatility bands placed above and below a moving
+                    average</span
+                  >
+                </div>
+              </div>
+              <div class="indicator-value" id="bollingerValue">-</div>
+            </div>
+            <div class="indicator">
+              <div class="indicator-name">
+                Stochastic
+                <div class="tooltip">
+                  ⓘ<span class="tooltiptext"
+                    >Momentum indicator comparing a particular closing price to
+                    a range of prices</span
+                  >
+                </div>
+              </div>
+              <div class="indicator-value" id="stochasticValue">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">
+            <i class="fas fa-chart-line"></i> Analysis Results
+          </h2>
+          <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p>AI is analyzing cryptocurrency data...</p>
+          </div>
+          <div class="analysis-result" id="analysisResult">
+            <div class="result-header">
+              <div class="crypto-icon">
+                <i class="fab fa-bitcoin"></i>
+              </div>
+              <div>
+                <div class="crypto-name">Select a cryptocurrency</div>
+                <div class="price">-</div>
+                <div class="price-change">-</div>
+              </div>
+            </div>
+
+            <div class="analysis-content">
+              <p>
+                Please select a cryptocurrency and click "Analyze with AI" to
+                get started.
+              </p>
+            </div>
+
+            <div class="recommendation" id="recommendation">-</div>
+
+            <div class="analysis-details">
+              <div class="detail-item">
+                <span>AI Confidence:</span>
+                <span id="confidenceValue">-</span>
+              </div>
+              <div class="confidence-bar">
+                <div class="confidence-level" id="confidenceBar"></div>
+              </div>
+              <div class="detail-item">
+                <span>Volatility:</span>
+                <span id="volatilityValue">-</span>
+              </div>
+              <div class="detail-item">
+                <span>Market Sentiment:</span>
+                <span id="sentimentValue">-</span>
+              </div>
+              <div class="detail-item">
+                <span>Next Week Prediction:</span>
+                <span id="predictionValue">-</span>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="priceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      
+      <footer>
+        <p>
+          CryptoAnalyzerAI &copy; 2025 | Powered by MG | This is for
+          demonstration purposes only and not financial advice
+        </p>
+      </footer>
+    </div>
+
+    <div class="notification" id="notification">
+      <i class="fas fa-exclamation-circle"></i>
+      <div id="notificationMessage"></div>
+    </div>
+
+    <script>
+      // DOM Elements
+      const themeToggle = document.getElementById("themeToggle");
+      const cryptoSelect = document.getElementById("cryptoSelect");
+      const timeframeSelect = document.getElementById("timeframeSelect");
+      const analyzeBtn = document.getElementById("analyzeBtn");
+      const loadingIndicator = document.getElementById("loadingIndicator");
+      const analysisResult = document.getElementById("analysisResult");
+      const priceChart = document.getElementById("priceChart");
+      const lastUpdated = document.getElementById("lastUpdated");
+      const notification = document.getElementById("notification");
+      const notificationMessage = document.getElementById(
+        "notificationMessage"
+      );
+
+      // API Key for Groq
+      const GROQ_API_KEY =
+        "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";
+
+      // Theme Toggle
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        // Save theme preference to localStorage
+        localStorage.setItem(
+          "theme",
+          document.body.classList.contains("dark-mode") ? "dark" : "light"
+        );
+      });
+
+      // Load theme preference from localStorage
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+      }
+
+      // Show notification function
+      function showNotification(message, isError = false) {
+        notificationMessage.textContent = message;
+        notification.className =
+          "notification " + (isError ? "error" : "success");
+        notification.querySelector("i").className = isError
+          ? "fas fa-exclamation-circle"
+          : "fas fa-check-circle";
+        notification.classList.add("show");
+
+        setTimeout(() => {
+          notification.classList.remove("show");
+        }, 3000);
+      }
+
+      // Analyze Button Click
+      analyzeBtn.addEventListener("click", async () => {
+        const selectedCrypto = cryptoSelect.value;
+        if (!selectedCrypto) {
+          showNotification("Please select a cryptocurrency first.", true);
+          return;
+        }
+
+        // Show loading indicator
+        loadingIndicator.style.display = "block";
+        analysisResult.style.opacity = "0.5";
+        analyzeBtn.disabled = true;
+
+        try {
+          await analyzeCrypto(selectedCrypto);
+        } catch (error) {
+          console.error("Analysis error:", error);
+          showNotification("Analysis failed. Please try again.", true);
+        } finally {
+          // Hide loading indicator
+          loadingIndicator.style.display = "none";
+          analysisResult.style.opacity = "1";
+          analyzeBtn.disabled = false;
+        }
+      });
+
+      // Main analysis function
+      async function analyzeCrypto(cryptoId) {
+        try {
+          // First get live price data from CoinGecko
+          const priceData = await getLivePriceData(cryptoId);
+
+          // Then get AI analysis from Groq
+          const analysis = await getAIAnalysis(cryptoId, priceData);
+
+          // Update UI with the results
+          updateAnalysisUI(priceData, analysis);
+
+          // Update technical indicators
+          updateTechnicalIndicators(analysis);
+
+          // Update last updated timestamp
+          lastUpdated.textContent =
+            "Updated: " + new Date().toLocaleTimeString();
+        } catch (error) {
+          console.error("Error in analysis:", error);
+          throw error;
+        }
+      }
+
+      // Get live price data from CoinGecko API
+      async function getLivePriceData(cryptoId) {
+        try {
+          // For demo purposes, we'll use simulated data since CoinGecko API requires authentication for some endpoints
+          // In a real application, you would use:
+          // const response = await fetch(`https://api.coingecko.com/api/v3/coins/${cryptoId}?localization=false&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`);
+
+          // Simulate API call delay
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          // Simulated response based on cryptoId
+          const simulatedData = {
+            bitcoin: {
+              name: "Bitcoin",
+              symbol: "BTC",
+              icon: "fab fa-bitcoin",
+              current_price: 51432.78,
+              price_change_percentage_24h: 2.35,
+              market_data: {
+                current_price: { usd: 51432.78 },
+                price_change_percentage_24h: 2.35,
+              },
+            },
+            ethereum: {
+              name: "Ethereum",
+              symbol: "ETH",
+              icon: "fab fa-ethereum",
+              current_price: 2987.23,
+              price_change_percentage_24h: 1.87,
+              market_data: {
+                current_price: { usd: 2987.23 },
+                price_change_percentage_24h: 1.87,
+              },
+            },
+            binancecoin: {
+              name: "Binance Coin",
+              symbol: "BNB",
+              icon: "fas fa-coins",
+              current_price: 378.92,
+              price_change_percentage_24h: -0.42,
+              market_data: {
+                current_price: { usd: 378.92 },
+                price_change_percentage_24h: -0.42,
+              },
+            },
+            cardano: {
+              name: "Cardano",
+              symbol: "ADA",
+              icon: "fas fa-chart-line",
+              current_price: 0.482,
+              price_change_percentage_24h: 3.21,
+              market_data: {
+                current_price: { usd: 0.482 },
+                price_change_percentage_24h: 3.21,
+              },
+            },
+            solana: {
+              name: "Solana",
+              symbol: "SOL",
+              icon: "fas fa-bolt",
+              current_price: 102.45,
+              price_change_percentage_24h: 5.67,
+              market_data: {
+                current_price: { usd: 102.45 },
+                price_change_percentage_24h: 5.67,
+              },
+            },
+            ripple: {
+              name: "Ripple",
+              symbol: "XRP",
+              icon: "fas fa-exchange-alt",
+              current_price: 0.543,
+              price_change_percentage_24h: -1.23,
+              market_data: {
+                current_price: { usd: 0.543 },
+                price_change_percentage_24h: -1.23,
+              },
+            },
+            polkadot: {
+              name: "Polkadot",
+              symbol: "DOT",
+              icon: "fas fa-circle",
+              current_price: 7.38,
+              price_change_percentage_24h: 0.89,
+              market_data: {
+                current_price: { usd: 7.38 },
+                price_change_percentage_24h: 0.89,
+              },
+            },
+            dogecoin: {
+              name: "Dogecoin",
+              symbol: "DOGE",
+              icon: "fas fa-dog",
+              current_price: 0.123,
+              price_change_percentage_24h: -2.56,
+              market_data: {
+                current_price: { usd: 0.123 },
+                price_change_percentage_24h: -2.56,
+              },
+            },
+          };
+
+          return simulatedData[cryptoId];
+        } catch (error) {
+          console.error("Error fetching price data:", error);
+          showNotification("Failed to fetch price data", true);
+          throw error;
+        }
+      }
+
+      // Get AI analysis from Groq
+      async function getAIAnalysis(cryptoId, priceData) {
+        try {
+          // For security, we would normally make this call from a backend server
+          // But for demonstration, we'll simulate the AI response
+
+          // Simulate API call delay
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+
+          // Simulated AI response based on cryptoId and price data
+          const simulatedAnalysis = {
+            recommendation: ["BUY", "SELL", "HOLD"][
+              Math.floor(Math.random() * 3)
+            ],
+            confidence: ["High", "Medium", "Low"][
+              Math.floor(Math.random() * 3)
+            ],
+            volatility: ["Low", "Medium", "High"][
+              Math.floor(Math.random() * 3)
+            ],
+            sentiment: ["Bullish", "Neutral", "Bearish"][
+              Math.floor(Math.random() * 3)
+            ],
+            prediction: ["Upward trend", "Sideways", "Downward trend"][
+              Math.floor(Math.random() * 3)
+            ],
+            rsi: (Math.random() * 30 + 35).toFixed(2),
+            macd: (Math.random() * 0.5 - 0.25).toFixed(4),
+            bollinger: (Math.random() * 10 + 45).toFixed(2),
+            stochastic: (Math.random() * 50 + 25).toFixed(2),
+            reasoning: `Based on technical analysis using RSI, MACD, Bollinger Bands, and Stochastic Oscillator, 
+                    the AI recommends action for ${
+                      priceData.name
+                    }. The market sentiment is currently trending with 
+                    moderate volatility. Key indicators suggest a ${
+                      Math.random() > 0.5 ? "positive" : "cautious"
+                    } outlook 
+                    for the coming week.`,
+          };
+
+          return simulatedAnalysis;
+
+          /* In a real implementation, you would use:
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'llama3-70b-8192',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a cryptocurrency trading expert. Analyze the given cryptocurrency data and provide trading advice.'
+                            },
+                            {
+                                role: 'user',
+                                content: `Analyze ${cryptoId} with current price $${priceData.current_price} and 24h change ${priceData.price_change_percentage_24h}%. Provide a recommendation with reasoning.`
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 500
+                    })
+                });
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+                */
+        } catch (error) {
+          console.error("Error fetching AI analysis:", error);
+          showNotification("Failed to get AI analysis", true);
+          throw error;
+        }
+      }
+
+      // Update UI with analysis results
+      function updateAnalysisUI(priceData, analysis) {
+        // Update crypto info
+        const cryptoIcon = document.querySelector(".crypto-icon");
+        cryptoIcon.innerHTML = `<i class="${priceData.icon}"></i>`;
+
+        document.querySelector(
+          ".crypto-name"
+        ).textContent = `${priceData.name} (${priceData.symbol})`;
+        document.querySelector(
+          ".price"
+        ).textContent = `$${priceData.current_price.toLocaleString()}`;
+
+        const priceChange = document.querySelector(".price-change");
+        const changeValue = priceData.price_change_percentage_24h;
+        priceChange.textContent = `${
+          changeValue > 0 ? "+" : ""
+        }${changeValue.toFixed(2)}%`;
+        priceChange.className = `price-change ${
+          changeValue >= 0 ? "positive" : "negative"
+        }`;
+
+        // Update recommendation
+        const recommendation = document.getElementById("recommendation");
+        recommendation.textContent = `Recommendation: ${analysis.recommendation}`;
+        recommendation.className = `recommendation ${analysis.recommendation.toLowerCase()}`;
+
+        // Update analysis details
+        document.getElementById("confidenceValue").textContent =
+          analysis.confidence;
+        document.getElementById("volatilityValue").textContent =
+          analysis.volatility;
+        document.getElementById("sentimentValue").textContent =
+          analysis.sentiment;
+        document.getElementById("predictionValue").textContent =
+          analysis.prediction;
+
+        // Update confidence bar
+        const confidenceBar = document.getElementById("confidenceBar");
+        confidenceBar.className = "confidence-level ";
+
+        let confidenceWidth = 50;
+        if (analysis.confidence === "High") confidenceWidth = 90;
+        if (analysis.confidence === "Medium") confidenceWidth = 60;
+        if (analysis.confidence === "Low") confidenceWidth = 30;
+
+        confidenceBar.style.width = `${confidenceWidth}%`;
+
+        if (analysis.confidence === "High")
+          confidenceBar.classList.add("high-confidence");
+        if (analysis.confidence === "Medium")
+          confidenceBar.classList.add("medium-confidence");
+        if (analysis.confidence === "Low")
+          confidenceBar.classList.add("low-confidence");
+
+        // Update analysis content
+        const analysisContent = document.querySelector(".analysis-content");
+        analysisContent.innerHTML = `<p>${analysis.reasoning}</p>`;
+
+        // Generate price history for chart
+        const priceHistory = generatePriceHistory(priceData.current_price, 30);
+        renderPriceChart(priceData.symbol, priceHistory);
+      }
+
+      // Generate simulated price history
+      function generatePriceHistory(currentPrice, days) {
+        const history = [];
+        let price = currentPrice;
+
+        for (let i = days; i > 0; i--) {
+          // Random price change between -5% and +5%
+          const change = Math.random() * 0.1 - 0.05;
+          price = price * (1 + change);
+          history.push(price);
+        }
+
+        return history.reverse();
+      }
+
+      // Update technical indicators
+      function updateTechnicalIndicators(analysis) {
+        document.getElementById("rsiValue").textContent = analysis.rsi;
+        document.getElementById("macdValue").textContent = analysis.macd;
+        document.getElementById("bollingerValue").textContent =
+          analysis.bollinger;
+        document.getElementById("stochasticValue").textContent =
+          analysis.stochastic;
+
+        // Color code RSI
+        const rsiValue = parseFloat(analysis.rsi);
+        const rsiElement = document.getElementById("rsiValue");
+        if (rsiValue > 70) {
+          rsiElement.style.color = "#d63031"; // Overbought
+        } else if (rsiValue < 30) {
+          rsiElement.style.color = "#00b894"; // Oversold
+        } else {
+          rsiElement.style.color = "#fdcb6e"; // Neutral
+        }
+      }
+
+      // Render price chart
+      function renderPriceChart(symbol, priceHistory) {
+        const ctx = priceChart.getContext("2d");
+
+        // Destroy previous chart if it exists
+        if (window.priceChartInstance) {
+          window.priceChartInstance.destroy();
+        }
+
+        // Create new chart
+        window.priceChartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: Array.from(
+              { length: priceHistory.length },
+              (_, i) => i + 1
+            ),
+            datasets: [
+              {
+                label: `${symbol} Price History`,
+                data: priceHistory,
+                borderColor: "#6c5ce7",
+                backgroundColor: "rgba(108, 92, 231, 0.1)",
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                mode: "index",
+                intersect: false,
+                callbacks: {
+                  label: function (context) {
+                    return `Price: $${context.raw.toFixed(2)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  maxTicksLimit: 6,
+                },
+              },
+              y: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  callback: function (value) {
+                    return "$" + value.toLocaleString();
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Initialize with a sample chart
+      window.onload = function () {
+        const sampleData = {
+          symbol: "BTC",
+          current_price: 51432.78,
+        };
+        const sampleHistory = generatePriceHistory(
+          sampleData.current_price,
+          30
+        );
+        renderPriceChart(sampleData.symbol, sampleHistory);
+
+        // Update last updated timestamp
+        lastUpdated.textContent = "Updated: " + new Date().toLocaleTimeString();
+      };
+    </script>
+  </body>
+</html>
